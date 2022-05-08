@@ -11,32 +11,27 @@ const styles = StyleSheet.create({
     },
     
     logo: {
-        width: 320,
-        height: 320,
+        width: 250,
+        height: 250,
         alignSelf: 'center',
+    },
+
+    text: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 35,
     },
 });
 
 const device_theme = Appearance.getColorScheme()
   
-export default function HomeScreen({ navigation }) {
-    
-    if (device_theme == 'dark'){
-        return(
-            <ScrollView style={styles.main_view_dark}>
-                <View style={styles.page_header}>
-                    <Image 
-                        source={require('../resources/images/logo_nobg.png')}
-                        style={styles.logo}
-                    />
-                </View>
-            </ScrollView>
-        );
-    }
+export default function HomeScreen() {
     
     return(
-        <ScrollView>
+        <ScrollView style={styles.main_view_dark}>
             <View style={styles.page_header}>
+                <Text style={styles.text}>Welcome back ???</Text>
                 <Image 
                     source={require('../resources/images/logo_nobg.png')}
                     style={styles.logo}
