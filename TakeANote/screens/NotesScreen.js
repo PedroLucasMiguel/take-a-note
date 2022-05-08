@@ -1,8 +1,10 @@
-import React from 'react'
+import React, {useRef, useState} from 'react'
 import { ScrollView, View, Text, Button, StyleSheet } from 'react-native';
+import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import {actions, RichEditor, RichToolbar} from "react-native-pell-rich-editor";
 
+enableScreens();
 const Stack = createNativeStackNavigator();
 
 const styles = StyleSheet.create({    
@@ -29,12 +31,39 @@ const styles = StyleSheet.create({
 });
 
 function CreateNewNote() {
+    const richText = useRef(null);
+
     return (
-        <View>
-            <Text>The note editor will be here :p</Text>
-        </View>
+        <ScrollView>
+            <RichEditor
+                ref={richText}
+                onChange={ descriptionText => {
+                            console.log("descriptionText:", descriptionText);
+                        }}
+            />
+            <RichToolbar
+                editor={richText}
+                actions={[ actions.setBold, actions.setItalic, actions.setUnderline, actions.heading1, actions.insertImage, actions.undo, actions.redo, ]}
+                iconMap={{ [actions.heading1]: ({tintColor}) => (<Text style={[{color: tintColor}]}>H1</Text>), }}
+            />
+        </ScrollView>
     );
 }
+
+/*
+function CreateNewNote() {
+    const editor = useRef(null)
+
+    return (
+        <ScrollView>
+            <QuillEditor
+                ref={editor}
+                initialHtml="<h1>Quill Editor for react-native</h1>"
+            />
+            <QuillToolbar editor={editor} options="full" theme="dark" />
+        </ScrollView>
+    );
+}*/
 
 function NotesHome({ navigation }) {
     return (
@@ -54,6 +83,7 @@ export default function NotesScreen() {
                 headerTitleAlign: 'center',
                 headerTitleStyle: styles.stack_navigator_text,
                 headerTintColor: '#ffffff',
+                animation: 'none', // Thats fix the crashes related to the webview... that's sad to be honest :(
             }}>
             <Stack.Screen name='YourNotes' component={NotesHome} options={{title: 'Your Notes'}} />
             <Stack.Screen 
@@ -62,7 +92,8 @@ export default function NotesScreen() {
                 options={{
                     title: 'New Note', headerRight: () => (
                         <Button title='Save' />
-                    ),}} 
+                    ),
+                }} 
             />
         </Stack.Navigator>
     );
