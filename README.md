@@ -1,7 +1,7 @@
 
 <h1 align="center">
     <br>
-    <a href="https://imgur.com/gkhUz5X" alt="Take a Note!"></a>
+    <img src="logo.png" alt="Take a Note!">
     <br>
     <b>Take a Note!</b>
     <br>
