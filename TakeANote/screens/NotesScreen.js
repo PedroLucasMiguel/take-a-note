@@ -1,10 +1,8 @@
-import React, {useRef, useState} from 'react'
-import { ScrollView, View, Text, Button, StyleSheet } from 'react-native';
-import { enableScreens } from 'react-native-screens';
+import React, {useRef} from 'react'
+import { ScrollView, View, Text, Button, StyleSheet, PermissionsAndroid, Alert } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {actions, RichEditor, RichToolbar} from "react-native-pell-rich-editor";
+import { actions, RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 
-enableScreens();
 const Stack = createNativeStackNavigator();
 
 const styles = StyleSheet.create({    
@@ -28,15 +26,21 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
 
+    create_note_view: {
+        backgroundColor: '#8a8a8a',
+    },
+
 });
 
 function CreateNewNote() {
     const richText = useRef(null);
+    const editorView = useRef(null);
 
     return (
-        <ScrollView>
+        <ScrollView style={styles.create_note_view} ref={editorView} onContentSizeChange={ () => editorView.current.scrollToEnd({ animated: false }) }>
             <RichEditor
                 ref={richText}
+                initialHeight={250}
                 onChange={ descriptionText => {
                             console.log("descriptionText:", descriptionText);
                         }}
@@ -50,26 +54,15 @@ function CreateNewNote() {
     );
 }
 
-/*
-function CreateNewNote() {
-    const editor = useRef(null)
-
-    return (
-        <ScrollView>
-            <QuillEditor
-                ref={editor}
-                initialHtml="<h1>Quill Editor for react-native</h1>"
-            />
-            <QuillToolbar editor={editor} options="full" theme="dark" />
-        </ScrollView>
-    );
-}*/
-
 function NotesHome({ navigation }) {
+
     return (
         <ScrollView  style={styles.main_view}>
             <View style={styles.create_new_view}>
-                <Button title='Create new note' onPress={() => navigation.navigate('NewNote')}></Button>
+                <Button 
+                    title='Create new note' 
+                    onPress={ () => navigation.navigate('NewNote') } 
+                />
             </View>
         </ScrollView>
     );

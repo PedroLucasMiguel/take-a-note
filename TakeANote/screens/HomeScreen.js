@@ -1,5 +1,5 @@
 import React from 'react'
-import { Appearance, View, ScrollView, Text, StyleSheet, Image } from 'react-native'
+import { View, ScrollView, Text, StyleSheet, Image } from 'react-native'
 
 const styles = StyleSheet.create({    
     main_view_dark: {
@@ -23,11 +23,9 @@ const styles = StyleSheet.create({
         fontSize: 35,
     },
 });
-
-const device_theme = Appearance.getColorScheme()
   
 export default function HomeScreen() {
-    
+
     return(
         <ScrollView style={styles.main_view_dark}>
             <View style={styles.page_header}>
