@@ -105,7 +105,7 @@ export default function App(){
                     options={{
                         title: 'Settings',
                         tabBarIcon: ({ color }) => (
-                        <MaterialCommunityIcons name="cog-outline" color={color} size={26} />
+                            <MaterialCommunityIcons name="cog-outline" color={color} size={26} />
                         ),
                     }}
                 />

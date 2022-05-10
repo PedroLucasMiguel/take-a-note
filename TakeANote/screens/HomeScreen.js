@@ -1,5 +1,20 @@
 import React from 'react'
 import { View, ScrollView, Text, StyleSheet, Image } from 'react-native'
+  
+export default function HomeScreen() {
+
+    return(
+        <ScrollView style={styles.main_view_dark}>
+            <View style={styles.page_header}>
+                <Text style={styles.text}>Welcome back ???</Text>
+                <Image 
+                    source={require('../resources/images/logo_nobg.png')}
+                    style={styles.logo}
+                />
+            </View>
+        </ScrollView>
+    );
+}
 
 const styles = StyleSheet.create({    
     main_view_dark: {
@@ -23,18 +38,3 @@ const styles = StyleSheet.create({
         fontSize: 35,
     },
 });
-  
-export default function HomeScreen() {
-
-    return(
-        <ScrollView style={styles.main_view_dark}>
-            <View style={styles.page_header}>
-                <Text style={styles.text}>Welcome back ???</Text>
-                <Image 
-                    source={require('../resources/images/logo_nobg.png')}
-                    style={styles.logo}
-                />
-            </View>
-        </ScrollView>
-    );
-}

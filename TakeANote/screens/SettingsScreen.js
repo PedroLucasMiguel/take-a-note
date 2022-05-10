@@ -1,5 +1,15 @@
 import React from 'react'
-import { Appearance, View, ScrollView, Text, StyleSheet } from 'react-native'
+import { View, ScrollView, Text, StyleSheet } from 'react-native'
+  
+export default function SettingsScreen() {
+    return(
+        <ScrollView>
+            <View style={styles.view_test}>
+                <Text style={styles.text_test_darkT}>Will have some settings here</Text>
+            </View>
+        </ScrollView>
+    );
+}
 
 const styles = StyleSheet.create({
     view_test: {
@@ -16,15 +26,3 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
-
-const device_theme = Appearance.getColorScheme()
-  
-export default function SettingsScreen() {
-    return(
-        <ScrollView>
-            <View style={styles.view_test}>
-                <Text style={styles.text_test_darkT}>Will have some settings here</Text>
-            </View>
-        </ScrollView>
-    );
-}
