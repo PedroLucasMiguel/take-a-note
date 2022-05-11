@@ -10,11 +10,22 @@ var RNFS = require('react-native-fs');
 
 const SAVE_DIR = RNFS.ExternalStorageDirectoryPath + '/Documents' + '/Take a Note';
 
-function CreateNewNote() {
+function OpenEditor({ route, navigation }) {
     const richText = useRef(null);
     const editorView = useRef(null);
-    const [fileName, setFileName] = useState('NewNote');
-    const [editorText, setEditorText] = useState('')
+    const [fileName, setFileName] = useState(route.params.fileName);
+    const [editorText, setEditorText] = useState('');
+    const [textToEdit, setTextToEdit] = useState('');
+
+    useEffect( () => {
+
+        const listener = navigation.addListener('focus', () => {
+            RNFS.readFile(SAVE_DIR + '/' + route.params.fileName + '.html', 'utf8')
+                .then(text => {setTextToEdit(text); setEditorText(text)})
+                .catch(() => setTextToEdit(''));
+        });
+
+    });
 
     return (
         <ScrollView style={styles.create_note_view} ref={editorView} onContentSizeChange={ () => editorView.current.scrollToEnd({ animated: false }) }>
@@ -23,8 +34,8 @@ function CreateNewNote() {
                 <TextInput 
                     style={styles.file_name_input} 
                     value={fileName} 
-                    onChangeText={(text) => {setFileName(text); console.log(fileName)}} 
-                    maxLength={10}
+                    onChangeText={(text) => {setFileName(text);}} 
+                    maxLength={25}
                 />
             </View>
             <RichEditor
@@ -33,9 +44,9 @@ function CreateNewNote() {
                 onChange={ 
                     descriptionText => {
                         setEditorText(descriptionText);
-                        console.log("descriptionText:", typeof(editorText));
                     }
                 }
+                initialContentHTML={textToEdit}
                 pasteAsPlainText={true}
                 initialFocus={true}
             />
@@ -61,16 +72,18 @@ function CreateNewNote() {
                 save={
                     () => { 
                         let path = SAVE_DIR + '/' + fileName + '.html';
-                        
-                        RNFS.writeFile(path, editorText, 'utf8')
-                            .then((success) => {
-                                Alert.alert('File saved succesfuly! \n' + path)
-                            })
-                            .catch((err) => {
-                                console.log(err.message);
-                            });
-                    
-                        console.log(path)
+                        if (fileName == ''){
+                            Alert.alert('THE FILE MUST HAVE A NAME!');
+                        }
+                        else {
+                            RNFS.writeFile(path, editorText, 'utf8')
+                                .then((success) => {
+                                    Alert.alert('File saved succesfuly! \n' + path)
+                                })
+                                .catch((err) => {
+                                    console.log(err.message);
+                                });
+                        }   
                     }
                 }
             />
@@ -80,18 +93,41 @@ function CreateNewNote() {
 
 function NotesHome({ navigation }) {
     
-    /*
-    let buttons = RNFS.readdir(SAVE_DIR).resolve()
-    
-    console.log(buttons)
-    */
+    const [btnsNames, setBtnsNames] = useState([]);
+    let btns = [];
+
+    useEffect( () => {
+
+        const listener = navigation.addListener('focus', () => {
+            RNFS.readdir(SAVE_DIR)
+                .then( (v) => { setBtnsNames(v) } , () => {console.log("erro?")} );
+        });
+
+    });
+
+    for(let i = 0; i < btnsNames.length; i++) {
+        btns.push(
+            <View style={{paddingTop: 20}}>
+                <Button 
+                    title={btnsNames[i].split('.')[0]} 
+                    key={btnsNames[i]}
+                    onPress={ () => navigation.navigate('Editor', {fileName: btnsNames[i].split('.')[0]}) }
+                    color={'green'}
+                />
+            </View>
+        );
+    }
+
     return (
         <ScrollView  style={styles.main_view}>
             <View style={styles.create_new_view}>
                 <Button 
                     title='Create new note' 
-                    onPress={ () => navigation.navigate('NewNote') } 
+                    onPress={ () => navigation.navigate('Editor', {fileName: ''}) } 
                 />
+            </View>
+            <View style={styles.open_notes_view}>
+                {btns}
             </View>
         </ScrollView>
     );
@@ -99,14 +135,17 @@ function NotesHome({ navigation }) {
 
 export default function NotesScreen() {
     useEffect( () => {
-        console.log('alo');
 
-        RNFS.exists(SAVE_DIR)
+        async function fetchDir() {
+            RNFS.exists(SAVE_DIR)
             .then( (exists) => {
                 if(!exists){
                     RNFS.mkdir(SAVE_DIR);
                 }
             });
+        }
+
+        fetchDir();
     });
     
     return (
@@ -121,9 +160,9 @@ export default function NotesScreen() {
         >
             <Stack.Screen name='YourNotes' component={NotesHome} options={{title: 'Your Notes'}} />
             <Stack.Screen 
-                name='NewNote'
-                options={{title: 'New Note'}} 
-                component={CreateNewNote}
+                name='Editor'
+                options={{title: 'Editor'}} 
+                component={OpenEditor}
             />
         </Stack.Navigator>
     );
@@ -168,5 +207,11 @@ const styles = StyleSheet.create({
     file_name_input: {
         backgroundColor: '#ffffff',
         color: '#000000',
+    },
+
+    open_notes_view: {
+        paddingTop: 20, 
+        paddingLeft: 20, 
+        paddingRight: 20,
     }
 });
